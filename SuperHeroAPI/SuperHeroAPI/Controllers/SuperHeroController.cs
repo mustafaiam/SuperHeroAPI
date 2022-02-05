@@ -7,15 +7,9 @@ namespace SuperHeroAPI.Controllers
     [ApiController]
     public class SuperHeroController : ControllerBase
     {
+
         private static List<SuperHero> heroes = new List<SuperHero>
             {
-                new SuperHero {
-                    Id = 1,
-                    Name = "Spider Man",
-                    FirstName = "Peter",
-                    LastName = "Parker",
-                    Place = "New York City"
-                },
                 new SuperHero {
                     Id = 2,
                     Name = "Ironman",
@@ -24,17 +18,23 @@ namespace SuperHeroAPI.Controllers
                     Place = "Long Island"
                 }
             };
+        private readonly DataContext _context;
+
+        public SuperHeroController(DataContext context)
+        {
+            _context = context;
+        }
 
         [HttpGet]
         public async Task<ActionResult<List<SuperHero>>> Get()
         {
-            return Ok(heroes);
+            return Ok(await _context.SuperHeros.ToListAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<SuperHero>> Get(int id)
         {
-            var hero = heroes.Find(h => h.Id == id);
+            var hero = await _context.SuperHeros.FindAsync(id);
 
             if (hero == null)
             {
